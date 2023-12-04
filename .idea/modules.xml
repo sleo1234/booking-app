@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/booking.iml" filepath="$PROJECT_DIR$/.idea/booking.iml" />
+      <module fileurl="file://$PROJECT_DIR$/com.booking-service/com.booking-service.iml" filepath="$PROJECT_DIR$/com.booking-service/com.booking-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/com.config/com.config.iml" filepath="$PROJECT_DIR$/com.config/com.config.iml" />
+      <module fileurl="file://$PROJECT_DIR$/com.discovery/com.discovery.iml" filepath="$PROJECT_DIR$/com.discovery/com.discovery.iml" />
+      <module fileurl="file://$PROJECT_DIR$/com.gateway/com.gateway.iml" filepath="$PROJECT_DIR$/com.gateway/com.gateway.iml" />
+    </modules>
+  </component>
+</project>
