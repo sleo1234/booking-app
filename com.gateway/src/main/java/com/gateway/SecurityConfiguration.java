@@ -9,6 +9,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 
 import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationSuccessHandler;
+import org.springframework.security.web.server.authentication.logout.RedirectServerLogoutSuccessHandler;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -40,19 +42,41 @@ public class SecurityConfiguration {
                 .build();
         return new MapReactiveUserDetailsService(user, adminUser);
     }
-    @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        http.formLogin()
-                .authenticationSuccessHandler(new RedirectServerAuthenticationSuccessHandler("/index.html"))
-                .and().authorizeExchange()
-                .pathMatchers("/booking-service/**", "/rating-service/**", "/login*", "/")
-                .permitAll()
-                .pathMatchers("/eureka/**").hasRole("ADMIN")
-                .anyExchange().authenticated().and()
-                .logout().and().csrf().disable().httpBasic(withDefaults());
-        return http.build();
-    }
+ //   @Bean
+//    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+//        http.formLogin()
+//                .authenticationSuccessHandler(new RedirectServerAuthenticationSuccessHandler("/home"))
+//                .and().authorizeExchange()
+//                .pathMatchers("/booking-service/**", "/rating-service/**", "/login*", "/")
+//                .permitAll()
+//                .pathMatchers("/eureka/**").hasRole("ADMIN")
+//                .anyExchange().authenticated().and()
+//                .logout().and().csrf().disable().httpBasic(withDefaults());
+//
+//
+//        return http.build();
+//    }
+ @Bean
+ public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+     http
+             .authorizeExchange(exchanges ->
+                     exchanges
+                             .pathMatchers("/booking-service", "/rating-service/**", "/login*", "/bookings","/booking-admin").permitAll()
+                             .pathMatchers("/eureka/**").hasRole("ADMIN")
+                           //  .pathMatchers("/booking-admin").hasRole("ADMIN")
+                             .anyExchange().authenticated()
+             )
+             .formLogin(formLogin ->
+                     formLogin.authenticationSuccessHandler(new RedirectServerAuthenticationSuccessHandler("/home"))
+             )
+             .logout(logout ->
+                     logout.logoutSuccessHandler(new RedirectServerLogoutSuccessHandler())
+             )
+             .csrf(c -> c.disable())
+             .httpBasic();
 
+     return http.build();
+ }
 
     @Bean
     public BCryptPasswordEncoder encoder() {

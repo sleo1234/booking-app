@@ -8,10 +8,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class BookingRestController {
 
 
-    @GetMapping("/booking-service/")
+    @GetMapping("/booking-service")
     public String getBookingService(){
 
         return "Booking service";
+    }
+
+    @GetMapping("/booking-admin")
+    public String getAdmin(){
+
+        return "Hi admin";
     }
 
 
