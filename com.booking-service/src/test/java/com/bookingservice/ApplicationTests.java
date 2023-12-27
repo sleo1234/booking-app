@@ -24,4 +24,20 @@ class ApplicationTests {
 		int port = serverPortService.getPort();
         System.out.println("--------------------------------- "+ port);
 	}
+
+
+	@Test
+	public void testAddUser(){
+
+
+
+
+
+
+
+
+
+
+
+	}
 }

@@ -42,9 +42,9 @@ public class GatewayApplicationLiveTest {
         HttpHeaders headers = new HttpHeaders();
         //headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         System.out.println("Cookie-------------------------------------------: "+sessionCookie);
-         headers.add("max-age","3600");
+         //headers.add("max-age","3600");
         //c51b1c97-cf69-4a1e-a582-69a114fb6dd0
-        headers.add("Set-Cookie",sessionCookie);
+        headers.add("Cookie",sessionCookie);
 
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
         System.out.println("Size-------------------------------------------: "+ response.getHeaders());
@@ -88,8 +88,8 @@ public class GatewayApplicationLiveTest {
 
       //  ResponseEntity<String> response = testRestTemplate.getForEntity(testUrl,String.class);
         MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
-        form.add("username","user");
-        form.add("password","password");
+        form.add("username","admin");
+        form.add("password","admin");
         ResponseEntity<String> response = testRestTemplate.postForEntity("http://localhost:"+randomPort+"/login",form,String.class);
 
         response = testRestTemplate
@@ -102,7 +102,7 @@ public class GatewayApplicationLiveTest {
 
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
         System.out.println("------- "+sessionCookie);
-        ResponseEntity<String>  response3 = testRestTemplate.exchange(baseUrl+randomPort+"/booking-service", HttpMethod.GET,httpEntity,String.class);
+        ResponseEntity<String>  response3 = testRestTemplate.exchange(baseUrl+randomPort+"/booking-admin", HttpMethod.GET,httpEntity,String.class);
      // ResponseEntity<String>  response2= testRestTemplate.exchange(baseUrl+randomPort+"/booking-service", HttpMethod.GET,httpEntity,String.class);
        Assertions.assertEquals(HttpStatus.OK, response3.getStatusCode());
 

@@ -12,6 +12,8 @@ import org.springframework.session.web.context.AbstractHttpSessionApplicationIni
 @Configuration
 public class SessionConfig extends AbstractHttpSessionApplicationInitializer {
 
+
+    @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);

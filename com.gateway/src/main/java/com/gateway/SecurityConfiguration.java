@@ -61,9 +61,9 @@ public class SecurityConfiguration {
      http
              .authorizeExchange(exchanges ->
                      exchanges
-                             .pathMatchers("/booking-service", "/rating-service/**", "/login*", "/bookings","/booking-admin").permitAll()
+                             .pathMatchers( "/rating-service/**", "/login*", "/bookings").permitAll()
                              .pathMatchers("/eureka/**").hasRole("ADMIN")
-                           //  .pathMatchers("/booking-admin").hasRole("ADMIN")
+                             .pathMatchers("/booking-admin").hasRole("ADMIN")
                              .anyExchange().authenticated()
              )
              .formLogin(formLogin ->
