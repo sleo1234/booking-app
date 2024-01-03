@@ -1,7 +1,11 @@
 package com.bookingservice.user;
 
 import com.bookingservice.booking.Booking;
+import com.bookingservice.office.Office;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
+import org.hibernate.type.SqlTypes;
 
 import java.util.Set;
 
@@ -11,7 +15,7 @@ public class User {
 
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "first_name")
@@ -20,6 +24,8 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
+
+    @Column(unique = true)
     private String email;
 
     @Column(name = "user_password")
@@ -29,6 +35,14 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private Set<Booking> bookings;
+
+
+    @ManyToMany
+    @JoinTable(name = "user_office",
+            joinColumns = @JoinColumn(name="user_id"),inverseJoinColumns = @JoinColumn(name="office_id"))
+    @Column(name="offices")
+    private Set<Office> offices;
+
 
     public User(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
@@ -45,12 +59,32 @@ public class User {
         this.bookings = bookings;
     }
 
+    public User() {
+    }
+
     public Integer getId() {
         return id;
     }
 
     public String getFirstName() {
         return firstName;
+    }
+
+    public User(String firstName, String lastName, String email, String password, Set<Booking> bookings, Set<Office> offices) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.bookings = bookings;
+        this.offices = offices;
+    }
+
+    public void setOffices(Set<Office> offices) {
+        this.offices = offices;
+    }
+
+    public Set<Office> getOffices() {
+        return offices;
     }
 
     public String getLastName() {
@@ -92,4 +126,6 @@ public class User {
     public void setBookings(Set<Booking> bookings) {
         this.bookings = bookings;
     }
+
+
 }

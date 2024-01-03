@@ -3,9 +3,13 @@ package com.bookingservice.office;
 
 import com.bookingservice.booking.Booking;
 import com.bookingservice.user.User;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import io.lettuce.core.dynamic.annotation.CommandNaming;
 import jakarta.persistence.*;
 import org.apache.commons.lang.RandomStringUtils;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
+import org.hibernate.type.SqlTypes;
 
 import java.util.Set;
 
@@ -27,17 +31,14 @@ public class Office {
 
 
     @ManyToMany(mappedBy = "offices")
-    Set<Booking> bookings;
 
-    public Office(String officeName, OfficeStatus status, Set<Booking> bookings) {
-        this.officeName = officeName;
-        this.status = status;
-        this.bookings = bookings;
-    }
+   private Set<User> users;
+
+
 
     public Office(Integer id, String officeName, OfficeStatus status) {
         this.id = id;
-        this.officeName = officeName;
+        this.officeName = officeName+RandomStringUtils.randomAlphabetic(4);
         this.status = status;
     }
 
@@ -56,8 +57,8 @@ public class Office {
         return status;
     }
 
-    public Set<Booking> getBookings() {
-        return bookings;
+    public Set<User> getUsers() {
+        return users;
     }
 
     public void setId(Integer id) {
@@ -72,8 +73,13 @@ public class Office {
         this.status = status;
     }
 
-    public void setBookings(Set<Booking> bookings) {
-        this.bookings = bookings;
+    public void setUsers(Set<User> users) {
+        this.users = users;
     }
 
+    public Office(String officeName, OfficeStatus status, Set<User> users) {
+        this.officeName = officeName+RandomStringUtils.randomAlphabetic(4);;
+        this.status = status;
+        this.users = users;
+    }
 }

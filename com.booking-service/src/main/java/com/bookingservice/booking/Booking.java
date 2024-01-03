@@ -4,7 +4,7 @@ import com.bookingservice.office.Office;
 import com.bookingservice.user.User;
 import jakarta.persistence.*;
 
-import java.util.Date;
+import java.time.*;
 import java.util.Locale;
 import java.util.Set;
 
@@ -17,20 +17,15 @@ public class Booking {
     private Integer id;
 
     @Basic
-    @Temporal(TemporalType.TIME)
-    private Date startDate;
+  // @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime startDate;
 
 
     @Basic
-    @Temporal(TemporalType.TIME)
-    private Date endDate;
+   //@Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime endDate;
 
 
-
-    @ManyToMany
-    @JoinTable(name = "booking_office",
-            joinColumns = @JoinColumn(name="booking_id"),inverseJoinColumns = @JoinColumn(name="office_id"))
-    Set<Office> offices;
 
 
 
@@ -38,17 +33,17 @@ public class Booking {
     @JoinColumn(name="user_id",nullable = false)
     private User user;
 
-    public Booking(Date startDate, Date endDate, Set<Office> offices, User user) {
+    public Booking(LocalDateTime startDate, LocalDateTime endDate, Set<Office> offices, User user) {
         this.startDate = startDate;
         this.endDate = endDate;
-        this.offices = offices;
+
         this.user = user;
     }
 
-    public Booking(Date startDate, Date endDate, Set<Office> offices) {
+    public Booking(LocalDateTime startDate, LocalDateTime endDate) {
         this.startDate = startDate;
         this.endDate = endDate;
-        this.offices = offices;
+
     }
 
     public void setUser(User user) {
@@ -66,31 +61,35 @@ public class Booking {
         return id;
     }
 
-    public Date getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public Set<Office> getOffices() {
-        return offices;
-    }
+
 
     public void setId(Integer id) {
         this.id = id;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 
-    public void setOffices(Set<Office> offices) {
-        this.offices = offices;
+    @Override
+    public String toString() {
+        return "Booking{" +
+                "id=" + id +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", user=" + user +
+                '}';
     }
 }

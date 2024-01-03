@@ -2,5 +2,5 @@ package com.bookingservice.office;
 
 public enum OfficeStatus {
 
-    BOOKED,FREE;
+    BOOKED,FREE,PARTIALLY_FREE;
 }
