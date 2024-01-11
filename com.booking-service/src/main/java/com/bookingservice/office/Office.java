@@ -30,7 +30,7 @@ public class Office {
     private OfficeStatus status;
 
 
-    @ManyToMany(mappedBy = "offices")
+    @ManyToMany(mappedBy = "offices",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 
    private Set<User> users;
 

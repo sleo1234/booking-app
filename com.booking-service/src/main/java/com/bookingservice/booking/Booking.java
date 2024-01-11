@@ -3,6 +3,8 @@ package com.bookingservice.booking;
 import com.bookingservice.office.Office;
 import com.bookingservice.user.User;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.*;
 import java.util.Locale;
@@ -29,8 +31,9 @@ public class Booking {
 
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="user_id",nullable = false)
+
     private User user;
 
     public Booking(LocalDateTime startDate, LocalDateTime endDate, Set<Office> offices, User user) {

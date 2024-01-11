@@ -4,6 +4,8 @@ import com.bookingservice.booking.Booking;
 import com.bookingservice.office.Office;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 import org.hibernate.type.SqlTypes;
 
@@ -33,7 +35,8 @@ public class User {
 
 
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH })
+    //@OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Booking> bookings;
 
 

@@ -12,5 +12,12 @@ public interface BookingRepository extends JpaRepository<Booking,Integer> {
 
     Set <Booking> findBookingByUser(User user);
 
+    void deleteBookingById(Integer id);
+
+    void deleteBookingByUserId(Integer id);
+
+    void deleteByUserIdAndStartDateLessThan(Integer id, LocalDateTime startDate);
+
+    void deleteByUserIdAndStartDate(Integer id, LocalDateTime startDate);
 
 }

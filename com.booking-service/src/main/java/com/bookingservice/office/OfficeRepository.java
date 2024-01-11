@@ -18,4 +18,7 @@ public interface OfficeRepository extends JpaRepository<Office,Integer> {
     @Query("UPDATE Office o SET o.status=?1 WHERE o.officeName=?2")
     public void updateStatus(OfficeStatus status,String name);
 
+    Office findByUsersId(Integer id);
+    void deleteByUsersId(Integer id);
+
 }
