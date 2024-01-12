@@ -5,7 +5,9 @@ import com.bookingservice.booking.Booking;
 import com.bookingservice.booking.BookingRepository;
 import com.bookingservice.office.Office;
 import com.bookingservice.office.OfficeRepository;
+import com.bookingservice.office.OfficeService;
 import com.bookingservice.office.OfficeStatus;
+import jakarta.persistence.EntityManager;
 import net.bytebuddy.asm.Advice;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,7 @@ import java.util.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Rollback(value = false)
+@Rollback(value = true)
 
 public class JpaTests {
 
@@ -30,6 +32,12 @@ public class JpaTests {
 
     @Autowired
     BookingRepository bookingRepo;
+
+    @Autowired
+    OfficeService officeService;
+
+    @Autowired
+    EntityManager entityManager;
 
     @Test
     public void userRepositoryTest(){
@@ -173,7 +181,7 @@ public class JpaTests {
         Office bookedOffice = officeRepository.findByUsersId(userId);
         String officeName = bookedOffice.getOfficeName();
         officeRepository.updateStatus(OfficeStatus.FREE,officeName);
-        officeRepository.deleteByUsersId(userId);
+        officeService.deleteUserOfficeRecords(userId);
         System.out.println("====== " +officeRepository.findAll());
         bookingRepo.deleteByUserIdAndStartDateLessThan(userId,date);
     }

@@ -21,4 +21,7 @@ public interface OfficeRepository extends JpaRepository<Office,Integer> {
     Office findByUsersId(Integer id);
     void deleteByUsersId(Integer id);
 
+    @Query(value = "DELETE FROM user_office uo where uo.user_id=?",nativeQuery = true)
+    void deleteUserOfficeRecord(Integer id);
+
 }

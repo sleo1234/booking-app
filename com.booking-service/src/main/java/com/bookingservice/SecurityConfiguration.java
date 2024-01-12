@@ -23,19 +23,19 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfiguration {
 
 
-     @Autowired
-     public void registerAuthProvider(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication();
-      }
-//     @Bean
-//     public InMemoryUserDetailsManager userDetailsService(BCryptPasswordEncoder bCryptPasswordEncoder) {
-//         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-//         manager.createUser(User.withUsername("user")
-//                 .password(bCryptPasswordEncoder.encode("password"))
-//                 .roles("USER")
-//                 .build());
-//         return manager;
-//     }
+//     @Autowired
+//     public void registerAuthProvider(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.inMemoryAuthentication();
+//      }
+     @Bean
+     public InMemoryUserDetailsManager userDetailsService(BCryptPasswordEncoder bCryptPasswordEncoder) {
+         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+         manager.createUser(User.withUsername("user")
+                 .password(bCryptPasswordEncoder.encode("password"))
+                 .roles("USER")
+                 .build());
+         return manager;
+     }
 
     @Bean
     public BCryptPasswordEncoder encoder() {
@@ -44,7 +44,7 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-         http.authorizeHttpRequests((auth) -> auth.requestMatchers(new AntPathRequestMatcher("/bookings")).permitAll()
+         http.authorizeHttpRequests((auth) -> auth.requestMatchers(new AntPathRequestMatcher("/bookings"),new AntPathRequestMatcher("/delete/**")).permitAll()
                                  .requestMatchers(HttpMethod.GET, "/booking-admin").hasRole("ADMIN")
 
                           //.requestMatchers(HttpMethod.GET,"/booking-service").hasRole("ANY")

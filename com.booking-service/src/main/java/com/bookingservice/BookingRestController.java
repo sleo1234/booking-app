@@ -1,10 +1,14 @@
 package com.bookingservice;
 
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.bookingservice.office.Office;
+import com.bookingservice.office.OfficeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api/v1")
 public class BookingRestController {
 
 
@@ -18,6 +22,17 @@ public class BookingRestController {
     public String getAdmin(){
 
         return "Hi admin";
+    }
+
+    @Autowired
+    OfficeService service;
+
+
+    @DeleteMapping("/delete/{id}")
+    //test delete from user_office
+    public String delete(@PathVariable("id") Integer userId){
+    service.deleteUserOfficeRecords(userId);
+    return "deleted from user office entry with id: "+userId.toString();
     }
 
 
