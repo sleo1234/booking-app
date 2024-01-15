@@ -44,7 +44,7 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-         http.authorizeHttpRequests((auth) -> auth.requestMatchers(new AntPathRequestMatcher("/bookings"),new AntPathRequestMatcher("/delete/**")).permitAll()
+         http.authorizeHttpRequests((auth) -> auth.requestMatchers(new AntPathRequestMatcher("/api/v1/**"),new AntPathRequestMatcher("/delete/**")).permitAll()
                                  .requestMatchers(HttpMethod.GET, "/booking-admin").hasRole("ADMIN")
 
                           //.requestMatchers(HttpMethod.GET,"/booking-service").hasRole("ANY")

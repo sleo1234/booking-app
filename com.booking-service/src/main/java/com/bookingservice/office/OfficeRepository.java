@@ -1,5 +1,6 @@
 package com.bookingservice.office;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,6 +17,7 @@ public interface OfficeRepository extends JpaRepository<Office,Integer> {
 
     @Modifying
     @Query("UPDATE Office o SET o.status=?1 WHERE o.officeName=?2")
+    @Transactional
     public void updateStatus(OfficeStatus status,String name);
 
     Office findByUsersId(Integer id);

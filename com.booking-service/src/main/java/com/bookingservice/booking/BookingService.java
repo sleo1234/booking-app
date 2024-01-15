@@ -3,6 +3,7 @@ package com.bookingservice.booking;
 
 import com.bookingservice.office.Office;
 import com.bookingservice.office.OfficeRepository;
+import com.bookingservice.office.OfficeService;
 import com.bookingservice.office.OfficeStatus;
 import com.bookingservice.user.User;
 import com.bookingservice.user.UserRepository;
@@ -26,6 +27,8 @@ public class BookingService {
     @Autowired
     private BookingRepository bookingRepo;
 
+    @Autowired
+    OfficeService officeService = new OfficeService();
 
     public Booking addBooking(Integer userId,String officeName, String startDate, String endDate){
 
@@ -52,6 +55,23 @@ public class BookingService {
 
 
 
+
+    public void cancelBooking(LocalDateTime startDate,Integer userId){
+
+
+
+        Office bookedOffice = officeRepository.findByUsersId(userId);
+        String officeName = bookedOffice.getOfficeName();
+        officeRepository.updateStatus(OfficeStatus.FREE,officeName);
+        officeService.deleteUserOfficeRecords(userId);
+        System.out.println("====== " +officeRepository.findAll());
+        bookingRepo.deleteByUserIdAndStartDateLessThan(userId,startDate);
+
+    }
+
+
+
+
     public LinkedHashMap<LocalDateTime,LocalDateTime> addBookingDates(Set<Booking> existingBookings) {
         LinkedHashMap<LocalDateTime,LocalDateTime> bookingDates= new LinkedHashMap<>();
         for (Booking booking : existingBookings){
@@ -60,9 +80,7 @@ public class BookingService {
         return bookingDates;
     }
 
-    public static boolean checkDatesOverlap(LocalDateTime startDate,LocalDateTime endDate, LinkedHashMap<LocalDateTime,LocalDateTime> unsortedDates){
-
-        unsortedDates.put(startDate,endDate);
+    public boolean checkDatesOverlap(LocalDateTime startDate,LocalDateTime endDate, LinkedHashMap<LocalDateTime,LocalDateTime> unsortedDates){
 
         LocalDateTime[] startDates = new LocalDateTime[unsortedDates.size()];
         LocalDateTime[] endDates = new LocalDateTime[unsortedDates.size()];
@@ -101,13 +119,13 @@ public class BookingService {
         }
 
 
-        for (int i=1; i < dateSize; i++){
+        for (int i=0; i < dateSize; i++){
 
-            if (endDates[i-1].isAfter(startDates[i])) return true;
-            return false;
+            if (endDate.isAfter(startDates[i])) return false;
+            return true;
         }
 
-        return false;
+        return true;
     }
 
 
