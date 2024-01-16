@@ -6,6 +6,7 @@ import com.bookingservice.booking.BookingService;
 import com.bookingservice.office.Office;
 import com.bookingservice.office.OfficeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,7 +47,7 @@ public class BookingRestController {
        System.out.println("-----0000000000000000000000000 "+ bookings);
         LinkedHashMap<LocalDateTime,LocalDateTime> bookingDates = bookingService.addBookingDates(bookings);
          System.out.println("----------- "+bookingDates);
-         if (bookingService.checkDatesOverlap(LocalDateTime.parse(startDate),LocalDateTime.parse(endDate),bookingDates)== false){
+         if (!bookingService.checkIfBookingDateOverlap(LocalDateTime.parse(startDate),LocalDateTime.parse(endDate),bookingDates)){
              bookingService.addBooking(userId,officeName,startDate,endDate);
              return "You succsesfully booked office: " + officeName+" from "+LocalDateTime.parse(startDate)+" to "+LocalDateTime.parse(endDate);
          }

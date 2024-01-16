@@ -58,8 +58,6 @@ public class BookingService {
 
     public void cancelBooking(LocalDateTime startDate,Integer userId){
 
-
-
         Office bookedOffice = officeRepository.findByUsersId(userId);
         String officeName = bookedOffice.getOfficeName();
         officeRepository.updateStatus(OfficeStatus.FREE,officeName);
@@ -80,54 +78,7 @@ public class BookingService {
         return bookingDates;
     }
 
-    public boolean checkDatesOverlap(LocalDateTime startDate,LocalDateTime endDate, LinkedHashMap<LocalDateTime,LocalDateTime> unsortedDates){
-
-        LocalDateTime[] startDates = new LocalDateTime[unsortedDates.size()];
-        LocalDateTime[] endDates = new LocalDateTime[unsortedDates.size()];
-        int dateSize=unsortedDates.size();
-        int index=0;
-
-        boolean swapped;
-        LocalDateTime temp;
-
-        for (Map.Entry<LocalDateTime,LocalDateTime> e : unsortedDates.entrySet()){
-            startDates[index]=e.getKey();
-            index++;
-        }
-
-
-
-
-        for (int i=0; i<dateSize-1; i++){
-            swapped=false;
-            for (int j=0; j<dateSize-i-1; j++){
-                if(startDates[j].isAfter(startDates[j+1])){
-                    temp=startDates[j];
-                    startDates[j]=startDates[j+1];
-                    startDates[j+1]=temp;
-                    swapped=true;
-                }
-
-            }
-
-            if (!swapped) break;
-
-        }
-
-        for (int i=0; i<dateSize; i++){
-            endDates[i]=unsortedDates.get(startDates[i]);
-        }
-
-
-        for (int i=0; i < dateSize; i++){
-
-            if (endDate.isAfter(startDates[i])) return false;
-            return true;
-        }
-
-        return true;
-    }
-
+    
 
 
     public Set<Booking> getBookingByOfficeName(String officeName) {
@@ -142,4 +93,27 @@ public class BookingService {
         bookings.forEach(flattenedSet::addAll);
         return flattenedSet;
     }
+
+
+    public static boolean checkIfBookingDateOverlap(LocalDateTime startDate, LocalDateTime endDate, LinkedHashMap<LocalDateTime,LocalDateTime> bookingDates){
+
+
+        for (Map.Entry<LocalDateTime,LocalDateTime> e : bookingDates.entrySet()){
+            if (overlap(startDate,endDate,e.getKey(),e.getValue())) return true;
+
+
+        }
+        return false;
+    }
+
+    public static boolean overlap(LocalDateTime startDateA, LocalDateTime endDateA, LocalDateTime startDateB, LocalDateTime endDateB){
+
+        if (startDateA.isAfter(endDateA)) System.out.println("A start date can not be after end date");
+        if (startDateB.isAfter(endDateB)) System.out.println("A start date can not be after end date");
+
+
+        return !((endDateA.isBefore(startDateB) && startDateA.isBefore(startDateB)) ||
+                (endDateB.isBefore(startDateA) && startDateB.isBefore(startDateA)));
+    }
+
 }

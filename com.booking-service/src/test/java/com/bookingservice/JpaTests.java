@@ -18,6 +18,7 @@ import com.bookingservice.user.User;
 import com.bookingservice.user.UserRepository;
 
 import javax.sound.sampled.Line;
+import java.nio.file.LinkOption;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -45,7 +46,7 @@ public class JpaTests {
     public void userRepositoryTest(){
 
 
-        User newUser = new User("Safta3","Leonard23","safta4.leonard@yahoo.com","abce123");
+        User newUser = new User("Safta03","Leonard203","safta5.leonard@yahoo.com","abce123");
         userRepository.save(newUser);
     }
 
@@ -104,7 +105,7 @@ public class JpaTests {
        return savedBooking;
    }
 
-   public Set<Booking> getBookingByOfficeName(String officeName) {
+   public  Set<Booking> getBookingByOfficeName(String officeName) {
        Office office = officeRepository.findByOfficeName(officeName);
        Set<User> users = userRepository.findUserByOffices(office);
        LinkedHashMap <LocalDateTime,LocalDateTime> bookingDates= new LinkedHashMap<>();
@@ -133,6 +134,7 @@ public class JpaTests {
         LocalDateTime endDate = LocalDateTime.parse("2023-12-29T23:30:00");
 
      flattenedSet.forEach(System.out :: println);
+       flattenedSet.forEach(System.out :: println);
        return flattenedSet;
    }
 
@@ -145,8 +147,8 @@ public class JpaTests {
 
    @Test
    public void testDatesOverlap(){
-       LocalDateTime startDate = LocalDateTime.parse("2024-01-13T05:30");
-       LocalDateTime endDate = LocalDateTime.parse("2024-01-13T08:30");
+       LocalDateTime startDate = LocalDateTime.parse("2024-01-11T08:30");
+       LocalDateTime endDate = LocalDateTime.parse("2024-01-11T11:30");
        LocalDateTime testDate = LocalDateTime.parse("2024-01-13T20:40");
        LinkedHashMap <LocalDateTime,LocalDateTime> bookingDates= new LinkedHashMap<>();
        Set<Booking> existingBookings = getBookingByOfficeName("officefJlK");
@@ -168,7 +170,7 @@ public class JpaTests {
 
        for (int i=0; i < startDates.length; i++){
 
-           if (endDate.isAfter(startDates[i])) System.out.println("Overlaping");
+           if (endDate.isAfter(startDates[i]) && endDate.isBefore(startDates[i])) System.out.println("Overlaping");
           else{
                System.out.println("Not Overlaping");
            }
@@ -179,7 +181,7 @@ public class JpaTests {
    @Test
    public void testGetBookingByOfficeName(){
 
-       getBookingByOfficeName("officetQvP");
+       getBookingByOfficeName("officeWTLY");
    }
 
    @Test
@@ -188,6 +190,67 @@ public class JpaTests {
         bookingRepo.deleteBookingById(4);
    }
 
+
+
+   public static boolean overlap(LocalDateTime startDateA, LocalDateTime endDateA, LocalDateTime startDateB, LocalDateTime endDateB){
+
+            if (startDateA.isAfter(endDateA)) System.out.println("A start date can not be after end date");
+       if (startDateB.isAfter(endDateB)) System.out.println("A start date can not be after end date");
+
+
+            return !((endDateA.isBefore(startDateB) && startDateA.isBefore(startDateB)) ||
+                    (endDateB.isBefore(startDateA) && startDateB.isBefore(startDateA)));
+   }
+
+
+
+   @Test
+   public void testTwoDatesOverlap(){
+       LocalDateTime startDate = LocalDateTime.parse("2024-01-11T08:30");
+       LocalDateTime endDate = LocalDateTime.parse("2024-01-11T11:30");
+       LocalDateTime testStartDate = LocalDateTime.parse("2024-01-11T11:31");
+       LocalDateTime testEndDate = LocalDateTime.parse("2024-01-11T15:40");
+
+       boolean response = overlap(startDate,endDate,testStartDate,testEndDate);
+       System.out.println(response);
+
+   }
+
+
+    public static boolean checkIfBookingDateOverlap(LocalDateTime startDate, LocalDateTime endDate, LinkedHashMap<LocalDateTime,LocalDateTime> bookingDates){
+
+
+        for (Map.Entry<LocalDateTime,LocalDateTime> e : bookingDates.entrySet()){
+            if (overlap(startDate,endDate,e.getKey(),e.getValue())) return true;
+
+
+        }
+        return false;
+    }
+
+    @Test
+    public void testIfBookingDatesOverlap(){
+
+        LinkedHashMap<LocalDateTime,LocalDateTime> bookingDates= new LinkedHashMap<>();
+        JpaTests tests = new JpaTests();
+        int index=0;
+
+        Set<Booking> existingBookings = getBookingByOfficeName("officefJlK");
+
+        for (Booking booking : existingBookings){
+            bookingDates.put(booking.getStartDate(),booking.getEndDate());
+            index++;
+        }
+
+        LocalDateTime startDate = LocalDateTime.parse("2023-12-29T16:35");
+        LocalDateTime endDate = LocalDateTime.parse("2023-12-29T20:00");
+
+       boolean response = checkIfBookingDateOverlap(startDate,endDate,bookingDates);
+
+       System.out.println(response);
+
+
+    }
     @Test
     public void testDeleteBookingByUserId(){
 
