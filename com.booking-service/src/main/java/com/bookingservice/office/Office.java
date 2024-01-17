@@ -35,6 +35,24 @@ public class Office {
    private Set<User> users;
 
 
+    @OneToMany(mappedBy = "office",cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH })
+    //@OnDelete(action = OnDeleteAction.CASCADE)
+    private Set<Booking> bookings;
+
+    public void setBookings(Set<Booking> bookings) {
+        this.bookings = bookings;
+    }
+
+    public Set<Booking> getBookings() {
+        return bookings;
+    }
+
+    public Office(String officeName, OfficeStatus status, Set<User> users, Set<Booking> bookings) {
+        this.officeName = officeName;
+        this.status = status;
+        this.users = users;
+        this.bookings = bookings;
+    }
 
     public Office(Integer id, String officeName, OfficeStatus status) {
         this.id = id;

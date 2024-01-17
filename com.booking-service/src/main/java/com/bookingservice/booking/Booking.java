@@ -33,8 +33,29 @@ public class Booking {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="user_id",nullable = false)
-
     private User user;
+
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="office_id",nullable = false)
+    private Office office;
+    public Booking(LocalDateTime startDate, LocalDateTime endDate, User user, Office office) {
+
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.user = user;
+        this.office = office;
+    }
+
+    public void setOffice(Office office) {
+        this.office = office;
+    }
+
+    public Office getOffice() {
+        return office;
+    }
+
+
 
     public Booking(LocalDateTime startDate, LocalDateTime endDate, Set<Office> offices, User user) {
         this.startDate = startDate;

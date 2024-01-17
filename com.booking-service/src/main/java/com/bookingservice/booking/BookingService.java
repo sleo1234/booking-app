@@ -35,36 +35,26 @@ public class BookingService {
         LocalDateTime sDate = LocalDateTime.parse(startDate);
         LocalDateTime eDate = LocalDateTime.parse(endDate);
         User bookingUser = userRepository.findById(userId).get();
-        Set<User> users = new HashSet<>();
-        users.add(bookingUser);
+
         Office office = officeRepository.findByOfficeName(officeName);
-        office.setUsers(users);
         officeRepository.updateStatus(OfficeStatus.BOOKED,officeName);
-        officeRepository.save(office);
-        Set offices = new HashSet();
-        Set bookings = new HashSet();
-        offices.add(office);
-        Booking newBooking = new Booking(sDate,eDate,offices,bookingUser);
-        bookings.add(newBooking);
-        bookingUser.setBookings(bookings);
-        bookingUser.setOffices(offices);
-        userRepository.save(bookingUser);
+        System.out.println("------------- status updated: "+officeRepository.findByOfficeName(officeName).getStatus());
+
+
+        Booking newBooking = new Booking(sDate,eDate,bookingUser,office);
+
         Booking savedBooking = bookingRepo.save(newBooking);
         return savedBooking;
     }
 
 
 
-
-    public void cancelBooking(LocalDateTime startDate,Integer userId){
-
-        Office bookedOffice = officeRepository.findByUsersId(userId);
-        String officeName = bookedOffice.getOfficeName();
-        officeRepository.updateStatus(OfficeStatus.FREE,officeName);
-        officeService.deleteUserOfficeRecords(userId);
-        System.out.println("====== " +officeRepository.findAll());
-        bookingRepo.deleteByUserIdAndStartDateLessThan(userId,startDate);
-
+    public void cancelBookingByDate(Integer userId, String startDate){
+        LocalDateTime sDate = LocalDateTime.parse(startDate);
+        Booking bookingToBeCanceled = bookingRepo.findBookingByStartDateAndUserId(sDate,userId);
+        Office bookedOffice = bookingToBeCanceled.getOffice();
+        officeRepository.updateStatus( OfficeStatus.FREE,bookedOffice.getOfficeName());
+        bookingRepo.deleteById(bookingToBeCanceled.getId());
     }
 
 
@@ -83,15 +73,10 @@ public class BookingService {
 
     public Set<Booking> getBookingByOfficeName(String officeName) {
         Office office = officeRepository.findByOfficeName(officeName);
-        Set<User> users = userRepository.findUserByOffices(office);
-        users.forEach(System.out :: println);
-        Set<Set<Booking>> bookings = new HashSet<Set<Booking>>();
-        Set<Booking> flattenedSet = new HashSet<>();
-        for (User user : users) {
-            bookings.add(bookingRepo.findBookingByUser(user));
-        }
-        bookings.forEach(flattenedSet::addAll);
-        return flattenedSet;
+
+
+        Set<Booking> bookings = bookingRepo.findBookingsByOfficeId(office.getId());
+        return  bookings;
     }
 
 

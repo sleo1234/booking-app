@@ -26,7 +26,7 @@ import java.util.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Rollback(value = true)
+@Rollback(value = false)
 
 public class JpaTests {
 
@@ -46,7 +46,7 @@ public class JpaTests {
     public void userRepositoryTest(){
 
 
-        User newUser = new User("Safta03","Leonard203","safta5.leonard@yahoo.com","abce123");
+        User newUser = new User("Safta01","Leonard201","safta3.leonard@yahoo.com","abce123");
         userRepository.save(newUser);
     }
 
@@ -86,62 +86,34 @@ public class JpaTests {
        LocalDateTime sDate = LocalDateTime.parse(startDate);
        LocalDateTime eDate = LocalDateTime.parse(endDate);
         User bookingUser = userRepository.findById(userId).get();
-        Set<User> users = new HashSet<>();
-        users.add(bookingUser);
+
        Office office = officeRepository.findByOfficeName(officeName);
-       office.setUsers(users);
        officeRepository.updateStatus(OfficeStatus.BOOKED,officeName);
        System.out.println("------------- status updated: "+officeRepository.findByOfficeName(officeName).getStatus());
-       officeRepository.save(office);
-       Set offices = new HashSet();
-       Set bookings = new HashSet();
-       offices.add(office);
-       Booking newBooking = new Booking(sDate,eDate,offices,bookingUser);
-       bookings.add(newBooking);
-       bookingUser.setBookings(bookings);
-       bookingUser.setOffices(offices);
-       userRepository.save(bookingUser);
+
+
+       Booking newBooking = new Booking(sDate,eDate,bookingUser,office);
+
        Booking savedBooking = bookingRepo.save(newBooking);
        return savedBooking;
    }
 
    public  Set<Booking> getBookingByOfficeName(String officeName) {
        Office office = officeRepository.findByOfficeName(officeName);
-       Set<User> users = userRepository.findUserByOffices(office);
-       LinkedHashMap <LocalDateTime,LocalDateTime> bookingDates= new LinkedHashMap<>();
-
-       users.forEach(System.out :: println);
-
-       int size = users.size();
-       int i = 0;
-       Set<Set<Booking>> bookings = new HashSet<Set<Booking>>();
-       Set<Booking> flattenedSet = new HashSet<>();
 
 
-           for (User user : users) {
+      Set<Booking> bookings = bookingRepo.findBookingsByOfficeId(office.getId());
 
-                  bookings.add(bookingRepo.findBookingByUser(user));
-                  //System.out.println(bookingRepo.findBookingByUser(user));
-
-           }
-
-           bookings.forEach(flattenedSet::addAll);
-           for (Booking booking : flattenedSet){
-               bookingDates.put(booking.getStartDate(),booking.getEndDate());
-           }
-
-       LocalDateTime startDate = LocalDateTime.parse("2023-12-29T16:25:00");
-        LocalDateTime endDate = LocalDateTime.parse("2023-12-29T23:30:00");
-
-     flattenedSet.forEach(System.out :: println);
-       flattenedSet.forEach(System.out :: println);
-       return flattenedSet;
+      return  bookings;
    }
 
    @Test
     public void testAddBooking(){
        LocalDate now = LocalDate.now();
-        Booking booking = addBooking(3,"officefJlK",now.toString()+"T17:40",now.toString()+"T18:40");
+       String startDate =now.toString()+"T13:20";
+       String endDate = now.toString()+"T18:40";
+
+        Booking booking = addBooking(1,"officejRtK",startDate,endDate);
    }
 
 
@@ -181,7 +153,7 @@ public class JpaTests {
    @Test
    public void testGetBookingByOfficeName(){
 
-       getBookingByOfficeName("officeWTLY");
+       getBookingByOfficeName("officejfLm");
    }
 
    @Test
@@ -257,19 +229,18 @@ public class JpaTests {
         bookingRepo.deleteBookingByUserId(1);
     }
 
-//    @Test
-//    public void testCancelBooking(){
-//        LocalDateTime date = LocalDateTime.parse("2023-12-29T16:30:00");
-//        Integer userId=5;
-//
-//
-//        Office bookedOffice = officeRepository.findByUsersId(userId);
-//        String officeName = bookedOffice.getOfficeName();
-//        officeRepository.updateStatus(OfficeStatus.FREE,officeName);
-//        officeService.deleteUserOfficeRecords(userId);
-//        System.out.println("====== " +officeRepository.findAll());
-//        bookingRepo.deleteByUserIdAndStartDateLessThan(userId,date);
-//    }
+    @Test
+    public void testCancelBooking(){
+        LocalDateTime startDate = LocalDateTime.parse("2024-01-17T06:40:00");
+        Integer userId=3;
+
+
+        Booking bookingToBeCanceled = bookingRepo.findBookingByStartDateAndUserId(startDate,userId);
+        Office bookedOffice = bookingToBeCanceled.getOffice();
+
+        bookingRepo.deleteById(bookingToBeCanceled.getId());
+
+    }
 
 
     @Test
