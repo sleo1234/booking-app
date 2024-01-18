@@ -11,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class BookingService {
@@ -99,6 +96,31 @@ public class BookingService {
 
         return !((endDateA.isBefore(startDateB) && startDateA.isBefore(startDateB)) ||
                 (endDateB.isBefore(startDateA) && startDateB.isBefore(startDateA)));
+    }
+
+
+    public void cancellBookingsByUser(Integer userId){
+        User user = userRepository.findById(userId).get();
+        Set<Booking> bookings = bookingRepo.findBookingByUser(user);
+
+        bookingRepo.deleteAllBookingsByUserId(userId);
+        updateOfficesStatus("FREE",userId);
+
+    }
+    public void updateOfficesStatus(String status, Integer userId){
+
+        User user = userRepository.findById(userId).get();
+        Set<Booking> bookings = bookingRepo.findBookingByUser(user);
+
+        for (Booking booking : bookings){
+            officeRepository.updateStatus(Enum.valueOf(OfficeStatus.class,status),booking.getOffice().getOfficeName());
+        }
+
+    }
+
+    public List<Booking> findAllBookings(){
+
+        return bookingRepo.findAll();
     }
 
 }

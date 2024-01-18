@@ -9,6 +9,7 @@ import com.bookingservice.office.OfficeService;
 import com.bookingservice.office.OfficeStatus;
 import jakarta.persistence.EntityManager;
 import net.bytebuddy.asm.Advice;
+import org.assertj.core.data.MapEntry;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -22,6 +23,7 @@ import java.nio.file.LinkOption;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @DataJpaTest
@@ -110,8 +112,8 @@ public class JpaTests {
    @Test
     public void testAddBooking(){
        LocalDate now = LocalDate.now();
-       String startDate =now.toString()+"T13:20";
-       String endDate = now.toString()+"T18:40";
+       String startDate =now.toString()+"T21:40";
+       String endDate = now.toString()+"T22:40";
 
         Booking booking = addBooking(1,"officejRtK",startDate,endDate);
    }
@@ -377,4 +379,60 @@ public class JpaTests {
 
         return sortedDates;
     }
+
+
+    @Test
+    public void testUpdateOfficesStatus(){
+
+        updateOfficesStatus("BOOKED",1);
+
+    }
+
+
+
+    @Test
+    public void testCancelBookingsByUser(){
+        cancellBookingsByUser(1);
+    }
+    public void cancellBookingsByUser(Integer userId){
+        User user = userRepository.findById(userId).get();
+        Set<Booking> bookings = bookingRepo.findBookingByUser(user);
+
+        bookingRepo.deleteAllBookingsByUserId(userId);
+        updateOfficesStatus("FREE",userId);
+
+    }
+    public void updateOfficesStatus(String status, Integer userId){
+
+        User user = userRepository.findById(userId).get();
+        Set<Booking> bookings = bookingRepo.findBookingByUser(user);
+
+        for (Booking booking : bookings){
+            officeRepository.updateStatus(Enum.valueOf(OfficeStatus.class,status),booking.getOffice().getOfficeName());
+        }
+
+    }
+
+
+    public void findClosestBookingDate(){
+
+        LocalDateTime now = LocalDateTime.now();
+        Set<Booking> bookings = (Set<Booking>) bookingRepo.findAll();
+
+         LinkedHashMap<LocalDateTime,LocalDateTime> dates = new LinkedHashMap<>();
+
+         while(true) {
+             for (Booking booking : bookings) {
+                 dates.put(booking.getStartDate(), booking.getEndDate());
+                 long minutes = ChronoUnit.MINUTES.between(now, booking.getStartDate());
+                 if (minutes < 15) {
+
+                     System.out.println(booking.getStartDate());
+                     System.out.println(" You have a booking to check in");
+                 }
+             }
+         }
+
+    }
+
 }
