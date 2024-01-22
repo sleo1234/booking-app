@@ -7,13 +7,18 @@ import com.bookingservice.office.OfficeService;
 import com.bookingservice.office.OfficeStatus;
 import com.bookingservice.user.User;
 import com.bookingservice.user.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
+@Transactional
 public class BookingService {
 
     @Autowired
@@ -118,9 +123,47 @@ public class BookingService {
 
     }
 
+    List<LocalDateTime> findBookingDatesByUserId(Integer userId){
+
+        List<LocalDateTime> bookingDates = new ArrayList<>();
+        User user = userRepository.findById(userId).get();
+
+        Set<Booking> bookings = bookingRepo.findBookingByUser(user);
+        for (Booking booking : bookings){
+            bookingDates.add(booking.getStartDate());
+        }
+        return bookingDates;
+    }
     public List<Booking> findAllBookings(){
 
         return bookingRepo.findAll();
+    }
+
+
+    @Scheduled(fixedDelay = 30, timeUnit = TimeUnit.SECONDS)
+    public void findClosestBookingDate(){
+
+        LocalDateTime myDate = LocalDateTime.parse("2024-01-18T22:05");
+        //List<LocalDateTime> bookingDates = findBookingDatesByUserId(1);
+
+        List<LocalDateTime> bookingDates = findBookingDatesByUserId(1);
+
+
+
+       for (int i=0; i<bookingDates.size(); i++) {
+           //dates.put(booking.getStartDate(), booking.getEndDate());
+           long minutes = ChronoUnit.MINUTES.between(LocalDateTime.now(), bookingDates.get(i));
+
+           System.out.println(minutes + " untill ....");
+           if (minutes < 15 && minutes > 0) {
+
+               //    System.out.println(booking.getStartDate());
+               bookingRepo.deleteByUserIdAndStartDate(1, bookingDates.get(i));
+
+           }
+
+       }
+
     }
 
 }

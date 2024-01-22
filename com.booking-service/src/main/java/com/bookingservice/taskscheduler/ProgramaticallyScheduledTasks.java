@@ -27,7 +27,7 @@ public class ProgramaticallyScheduledTasks {
     @Autowired
     public ProgramaticallyScheduledTasks(TaskScheduler taskScheduler) {
         this.taskScheduler = taskScheduler;
-        scheduleTask();
+        //scheduleTask();
     }
 
 
@@ -42,26 +42,9 @@ public class ProgramaticallyScheduledTasks {
 
     public void perform(){
 
-        findClosestBookingDate();
+      //  findClosestBookingDate();
     }
 
 
-    public void findClosestBookingDate(){
 
-        LocalDateTime myDate = LocalDateTime.parse("2024-01-18T22:05");
-
-
-        while(true) {
-
-                //dates.put(booking.getStartDate(), booking.getEndDate());
-                long minutes = ChronoUnit.MINUTES.between(LocalDateTime.now(), myDate);
-                if (minutes < 15) {
-
-                //    System.out.println(booking.getStartDate());
-                    System.out.println(" You have a booking to check in");
-
-            }
-        }
-
-    }
 }

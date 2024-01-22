@@ -53,6 +53,15 @@ public class JpaTests {
     }
 
     @Test
+    public void testDuration(){
+      // LocalDateTime myDate = LocalDateTime.parse("2024-01-17T14:40:00");
+        LocalDateTime myDate = LocalDateTime.parse("2024-01-22T21:25:00");
+
+        long minutes = ChronoUnit.MINUTES.between(LocalDateTime.now(), myDate);
+        System.out.println(minutes);
+    }
+
+    @Test
     void testDeleteBookingByUserIdAndStartDate(){
 
         LocalDateTime beforeDate = LocalDateTime.parse("2023-12-29T09:45");
@@ -112,8 +121,8 @@ public class JpaTests {
    @Test
     public void testAddBooking(){
        LocalDate now = LocalDate.now();
-       String startDate =now.toString()+"T21:40";
-       String endDate = now.toString()+"T22:40";
+       String startDate =now.toString()+"T21:50";
+       String endDate = now.toString()+"T23:40";
 
         Booking booking = addBooking(1,"officejRtK",startDate,endDate);
    }
@@ -177,6 +186,12 @@ public class JpaTests {
    }
 
 
+
+   @Test
+   public void testDEleteByUserIdAndStartDate(){
+
+        bookingRepo.deleteByUserIdAndStartDate(1,LocalDateTime.parse("2024-01-18T21:40"));
+   }
 
    @Test
    public void testTwoDatesOverlap(){
